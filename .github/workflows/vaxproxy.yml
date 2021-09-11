@@ -37,7 +37,7 @@ jobs:
     # Build the Docker image
     - name: Build Docker image
       run: |-
-        docker build -t vaxproxy:${{ github.sha }} \
+        docker build -t auvaxproxy/vaxproxy:${{ github.sha }} \
           --build-arg env=production \
           --build-arg GITHUB_SHA="$GITHUB_SHA" \
           --build-arg GITHUB_REF="$GITHUB_REF" .
@@ -45,7 +45,7 @@ jobs:
     # Push the Docker image to dockerhub
     - name: Publish
       run: |-
-        docker push vaxproxy:${{ github.sha }}
+        docker push auvaxproxy/vaxproxy:${{ github.sha }}
 
     # Set up kustomize
     - name: Set up Kustomize
