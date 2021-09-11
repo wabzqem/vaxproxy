@@ -1,0 +1,61 @@
+name: Build and deploy vaxproxy
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+env:
+  DEPLOYMENT_NAME: vaxproxy
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  setup-build-publish-deploy:
+    name: Setup, Build, Publish, and Deploy vaxproxy
+    runs-on: ubuntu-latest
+    steps:
+
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - name: login to dockerhub
+      uses: docker/login-action@v1
+      with:
+        username: ${{ secrets.DOCKERHUB_USERNAME }}
+        password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+    - name: Kubernetes set context
+      uses: Azure/k8s-set-context@v1
+      with:
+        method: kubeconfig
+        kubeconfig: ${{ secrets.LINODE_KUBE_CONFIG }}
+
+    # Build the Docker image
+    - name: Build Docker image
+      run: |-
+        docker build -t vaxproxy:${{ github.sha }} \
+          --build-arg env=production \
+          --build-arg GITHUB_SHA="$GITHUB_SHA" \
+          --build-arg GITHUB_REF="$GITHUB_REF" .
+
+    # Push the Docker image to dockerhub
+    - name: Publish
+      run: |-
+        docker push vaxproxy:${{ github.sha }}
+
+    # Set up kustomize
+    - name: Set up Kustomize
+      run: |-
+        curl -sfLo kustomize https://github.com/kubernetes-sigs/kustomize/releases/download/v3.1.0/kustomize_3.1.0_linux_amd64
+        chmod u+x ./kustomize
+
+    # Deploy to k8s
+    - name: Deploy
+      run: |-
+        ./kustomize edit set image vaxproxy=${{ secrets.DOCKERHUB_USERNAME }}/vaxproxy:${{ github.sha }}
+        ./kustomize build . | kubectl apply -f -
+        kubectl rollout status deployment/$DEPLOYMENT_NAME

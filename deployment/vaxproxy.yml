@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: vaxproxy
+  labels:
+    app: vaxproxy
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: vaxproxy
+  template:
+    metadata:
+      labels:
+        app: vaxproxy
+    spec:
+      containers:
+      - name: vaxproxy
+        image: vaxproxy
+        env:
+          - name: CERT_PRIVKEY
+            valueFrom:
+              secretKeyRef:
+                name: vax-certs
+                key: privkey
+        imagePullPolicy: Always
+        resources:
+            requests:
+              memory: "256Mi"
+            limits:
+              memory: "256Mi"
+#      nodeSelector:
+#        cloud.google.com/gke-nodepool: non-vespa
