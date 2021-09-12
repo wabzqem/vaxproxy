@@ -43,7 +43,7 @@ def create_image():
         data=request.get_data(),
         cookies=request.cookies,
         allow_redirects=False)    
-    pprint(resp.content.decode("utf-8"))
+    app.logger.error(resp.content.decode("utf-8"))
     json_data = json.loads(resp.content.decode("utf-8"))
 
     #with open("response.json") as jsonFile:
