@@ -43,12 +43,7 @@ def create_image():
         data=request.get_data(),
         cookies=request.cookies,
         allow_redirects=False)    
-    app.logger.error(resp.content.decode("utf-8"))
     json_data = json.loads(resp.content.decode("utf-8"))
-
-    #with open("response.json") as jsonFile:
-    #    json_data = json.load(jsonFile)
-    #    jsonFile.close()
 
     if ("errorList" in json_data): # Probably "immunisation record not up to date"
         return Response(json_data, 404)
