@@ -10,7 +10,7 @@ The QR-code can be verified by:
 See details below.
 
 ### How
-The proxy sends a request with your cookies to medicare, and converts the JSON containing your vaccination data into a sign1 cose/cbor message, then compresses and base64s the result (as per the EU specs).
+The proxy sends a request with your cookies to medicare, and converts the JSON containing your vaccination data into a sign1 cose/cbor message, then compresses and base45s the result (as per the EU specs).
 
 ### Obtain a QR Code:
 
