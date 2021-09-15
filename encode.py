@@ -75,10 +75,16 @@ def create_image():
         "is": "Australian Department of Health", # Certificate issuer
         "ci": "URN:UVCI:{}".format(json_data['immunisationRecordData']['immunisationRecordMetadata']['immunisationRecordId'])
     }
-    #if (v['vaccineBrand'] == 'Pfizer Comirnaty'):
-    entry["vp"] = "1119349007" # a SARS-CoV-2 mRNA vaccine
-    entry["mp"] = "EU/1/20/1528" # Comirnaty
-    entry["ma"] = "ORG-100030215" # Biontech Manufacturing GmbH (is this what we get?)
+
+    if (v['vaccineBrand'] == 'Pfizer Comirnaty'):
+        entry["vp"] = "1119349007" # a SARS-CoV-2 mRNA vaccine
+        entry["mp"] = "EU/1/20/1528" # Comirnaty
+        entry["ma"] = "ORG-100030215" # Biontech Manufacturing GmbH (is this what we get?)
+    else if 'Astra' in v['vaccineBrand']:
+        entry["vp"] = "1119305005" # a SARS-CoV-2 antigen vaccine
+        entry["mp"] = "EU/1/21/1529" # Vaxzevria
+        entry["ma"] = "ORG-100001699" # AstraZeneca
+    
     entry["dn"] = 2 # number in series of doses
     entry["sd"] = 2 # overall number in series
     entry["dt"] = v['immunisationDate']
