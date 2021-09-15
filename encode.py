@@ -80,7 +80,7 @@ def create_image():
         entry["vp"] = "1119349007" # a SARS-CoV-2 mRNA vaccine
         entry["mp"] = "EU/1/20/1528" # Comirnaty
         entry["ma"] = "ORG-100030215" # Biontech Manufacturing GmbH (is this what we get?)
-    else if 'Astra' in v['vaccineBrand']:
+    elif 'Astra' in v['vaccineBrand']:
         entry["vp"] = "1119305005" # a SARS-CoV-2 antigen vaccine
         entry["mp"] = "EU/1/21/1529" # Vaxzevria
         entry["ma"] = "ORG-100001699" # AstraZeneca
