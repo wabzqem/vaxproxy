@@ -14,7 +14,7 @@ The proxy sends a request with your cookies to medicare, and converts the JSON c
 
 ### Obtain a QR Code:
 
-**GIANT RED WARNING**: Doing this sends your temporary myGov authentication token to my server. This is very risky, as I could potentially be doing anything with it, including stealing your identity. However: the code that runs this is right here and deploys from the GitHub action and does nothing nefarious. Also I'm not that kind of person, but you have to trust me. Sorry.
+**GIANT RED WARNING**: Doing this sends your temporary myGov authentication token to my server. This is very risky, as I could potentially be doing anything with it, including stealing your identity. The code that runs this is right here and deploys from the GitHub action and does nothing nefarious, but I could potentially deploy malicious code outside of this. I'm not that kind of person, but you have to trust me. Sorry.
 
 - Log in to myGov in your browser
 - Go to the following URL while your browser's network developer tools are open: https://www2.medicareaustralia.gov.au/moaapi/moa-ihs/record/cir/data/1
