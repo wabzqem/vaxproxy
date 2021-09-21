@@ -45,7 +45,7 @@ def pdf():
         cookies=request.cookies,
         allow_redirects=False)
 
-    pdf = Pdf.open(resp.content)
+    pdf = Pdf.open(BytesIO(resp.content))
     return serve_pdf(pdf)
 
 @app.route('/')
