@@ -16,12 +16,13 @@ import qrcode
 import json
 import requests
 from urllib.request import urlopen
+from pikepdf import Pdf
 
 import time
 import datetime
 from os import getenv
 
-from flask import Flask, request, Response, make_response, send_file
+from flask import Flask, request, make_response, send_file, jsonify
 app = Flask(__name__)
 
 priv_key = {
@@ -32,6 +33,20 @@ priv_key = {
     EC2KpY: unhexlify(b'6b278200cd45d22127525e9c7272b67b722f029e40ec55547886a1ae0ffde966'),
     EC2KpD: unhexlify(getenv("CERT_PRIVKEY"))
 }
+
+@app.route('/pdf')
+def pdf():
+    irn = request.args.get('irn')
+    resp = requests.request(
+        method=request.method,
+        url="https://www2.medicareaustralia.gov.au/moaapi/moa-ihs/record/covid/view/{}".format(irn),
+        headers={key: value for (key, value) in request.headers if key != 'Host'},
+        data=request.get_data(),
+        cookies=request.cookies,
+        allow_redirects=False)
+
+    pdf = Pdf.open(resp.content)
+    return serve_pdf(pdf)
 
 @app.route('/')
 def create_image():
@@ -46,7 +61,7 @@ def create_image():
     json_data = json.loads(resp.content.decode("utf-8"))
 
     if ("errorList" in json_data): # Probably "immunisation record not up to date"
-        return Response(json_data, 404)
+        return make_response(jsonify(json_data), 404)
 
     validTo = datetime.datetime.strptime(json_data['immunisationRecordData']['immunisationRecordMetadata']['dateValidTo'], '%Y-%m-%d')
     dateGenerated = datetime.datetime.strptime(json_data['immunisationRecordData']['immunisationRecordMetadata']['dateGenerated'][:10], '%Y-%m-%d')
@@ -104,6 +119,12 @@ def serve_image(pil_img):
     pil_img.save(img_io)
     img_io.seek(0)
     return send_file(img_io, mimetype='image/png')
+
+def serve_pdf(pdf):
+    pdf_io = BytesIO()
+    pdf.save(pdf_io)
+    pdf_io.seek(0)
+    return send_file(pdf_io, mimetype='application/pdf')
 
 if __name__ == "__main__":
     print("RUNNING")

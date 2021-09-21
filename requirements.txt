@@ -24,3 +24,4 @@ urllib3==1.26.6
 zbar-py==1.0.4
 qrcode
 Flask
+pikepdf==3.0.0
